@@ -23,7 +23,10 @@ def connect():
 def create_table():
     db = mysql.connector.connect(host='localhost', database='gb_sql', user='root', password='qwerty')
     my_cursor = db.cursor()
-    my_cursor.execute("CREATE TABLE student(id INT,name VARCHAR(255), mark INT)")
+    try:
+        my_cursor.execute("CREATE TABLE student(id INT,name VARCHAR(255), mark INT)")
+    except:
+        db.rollback()
     db.close()
 
 
@@ -32,7 +35,7 @@ def insert_data():
     db = mysql.connector.connect(host='localhost', database='gb_sql', user='root', password='qwerty')
     my_cursor = db.cursor()
     try:
-        my_cursor.execute("INSERT INTO students values(1,'Ivanov',5),(2,'Petrov',2),(3,'Sidorov',4)")
+        my_cursor.execute("INSERT INTO student values(1,'Ivanov',5),(2,'Petrov',2),(3,'Sidorov',4)")
         db.commit()
         print('Data inserted successfully.')
     except:
@@ -45,7 +48,7 @@ def select_data():
     db = mysql.connector.connect(host='localhost', database='gb_sql', user='root', password='qwerty')
     my_cursor = db.cursor()
     try:
-        my_cursor.execute("SELECT * FROM students")
+        my_cursor.execute("SELECT * FROM student")
         selected_data = my_cursor.fetchall()
         for i in selected_data:
             id = i[0]
@@ -61,13 +64,13 @@ def select_data():
 def update_data():
     db = mysql.connector.connect(host='localhost', database='gb_sql', user='root', password='qwerty')
     my_cursor = db.cursor()
-    # try:
-    my_cursor.execute("UPDATE student SET mark=6 WHERE name='Petrov'")
-    db.commit()
-    print('Data updated successfully')
-    #select_data()
-    # except:
-    #     db.rollback()
+    try:
+        my_cursor.execute("UPDATE student SET mark=6 WHERE name='Petrov'")
+        db.commit()
+        print('Data updated successfully')
+        select_data()
+    except:
+        db.rollback()
     db.close()
 
 
